@@ -11,7 +11,7 @@ st.write("Automated Graph Orchestration & Pathfinding Platform")
 # Sidebar Controls
 st.sidebar.header("Dispatch Control Terminal")
 
-# Algorithm Selection (Populates the dropdown selector)
+# Algorithm Selection
 algorithm_choice = st.sidebar.selectbox(
     "Select Routing Algorithm",
     options=["A* Search", "Dijkstra's Algorithm"]
@@ -96,17 +96,20 @@ if st.sidebar.button("Dispatch Delivery Agent"):
         fig, ax = plt.subplots(figsize=(8, 5))
         node_positions = nx.get_node_attributes(G, 'pos')
         
-        # Draw background elements
+        # Draw background nodes (names hidden to prevent text clutter)
         nx.draw_networkx_nodes(G, node_positions, node_color="#e74c3c", node_size=700, ax=ax)
-        nx.draw_networkx_labels(G, node_positions, font_color="white", font_weight="bold", ax=ax)
+        
+        # Draw background edges
         nx.draw_networkx_edges(G, node_positions, edge_color="gray", width=2, ax=ax)
         
-        edge_labels = nx.get_edge_attributes(G, 'weight')
+        # Format edge weights to display in "km"
+        raw_edge_labels = nx.get_edge_attributes(G, 'weight')
+        edge_labels = {k: f"{v} km" for k, v in raw_edge_labels.items()}
         nx.draw_networkx_edge_labels(G, node_positions, edge_labels=edge_labels, ax=ax)
         
-        # Highlight active path
+        # Highlight active path in GREEN
         path_edges = list(zip(path[:-1], path[1:]))
-        nx.draw_networkx_edges(G, node_positions, edgelist=path_edges, edge_color="#2c3e50", width=4, ax=ax)
+        nx.draw_networkx_edges(G, node_positions, edgelist=path_edges, edge_color="#27ae60", width=4, ax=ax)
         
         st.pyplot(fig)
         
