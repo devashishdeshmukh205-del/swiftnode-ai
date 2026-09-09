@@ -37,7 +37,7 @@ st.markdown("""
     .logo-text {
         font-size: 28px;
         font-weight: 800;
-        color: #000;
+        color: red;
         letter-spacing: -1px;
     }
     .logo-accent {
