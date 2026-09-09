@@ -76,7 +76,7 @@ st.markdown("""
         margin-bottom: 60px;
     }
     .value-card {
-        background: black;
+        background: white;
         padding: 30px 20px;
         border-radius: 16px;
         text-align: center;
