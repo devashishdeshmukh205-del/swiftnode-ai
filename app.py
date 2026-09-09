@@ -130,7 +130,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Inline Graph Utilities with Label Background Bounding Box
+# 3. Inline Graph Utilities with Restored Node Labels
 def create_city_graph():
     G = nx.Graph()
     nodes = ["Library", "Hostel A", "Hostel B", "Cafeteria", "Lab", "Home", "Gym"]
@@ -176,14 +176,16 @@ def draw_graph(G, path=None, highlight_start=True):
         path_edges = list(zip(path[:-1], path[1:]))
         nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='#2ecc71', width=4, ax=ax)
 
-    # Draw nodes (names hidden to prevent text clutter)
-    nx.draw_networkx_nodes(G, pos, node_color='#b85c96', node_size=2500, ax=ax)
+    # Draw nodes and restore building names (labels)
+    nx.draw_networkx_nodes(G, pos, node_color='#b85c96', node_size=2800, ax=ax)
+    nx.draw_networkx_labels(G, pos, font_size=8, font_color='white', font_weight='bold', ax=ax)
     
     if path and len(path) > 0 and highlight_start:
         start_node = path[0]
-        nx.draw_networkx_nodes(G, pos, nodelist=[start_node], node_color='#f1c40f', node_size=2800, ax=ax)
+        nx.draw_networkx_nodes(G, pos, nodelist=[start_node], node_color='#f1c40f', node_size=3100, ax=ax)
+        nx.draw_networkx_labels(G, pos, labels={start_node: start_node}, font_size=8, font_color='black', font_weight='bold', ax=ax)
 
-    # Draw edge labels LAST with a white background box and "km" unit so they are never hidden by lines
+    # Draw edge labels with white background box and "km" unit
     edge_labels = {(u, v): f"{d['weight']} km" for u, v, d in G.edges(data=True)}
     nx.draw_networkx_edge_labels(
         G, pos, 
@@ -263,7 +265,6 @@ with demo_col1:
     start_node = st.selectbox("📍 Pick-up Terminal", nodes, index=0)
     goal_node = st.selectbox("🎯 Drop-off Hub", nodes, index=len(nodes)-1)
     
-    # Fixed the empty options array bug by explicitly providing choice options
     algorithm = st.radio("🧠 Routing Algorithm", options=["A* Search (Optimal & Smart)", "Breadth-First Search (BFS)"])
     avoid_hazards = st.checkbox("🚧 Avoid Traffic/Hazard Zones", value=True)
     
@@ -285,10 +286,12 @@ with demo_col2:
         if path:
             st.success(f"🎉 **Route Discovered for {package_type}:** {' ➔ '.join(path)}")
             
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Total Nodes", len(path))
-            m2.metric("Route Cost", f"{cost} km" if isinstance(cost, (int, float)) else cost)
-            m3.metric("Status", "🛵 Agent Ready at Start")
+            # Added an explicit metrics box showing the Active Search Algorithm
+            m1, m2, m3, m4 = st.columns(4)
+            m1.metric("Active Algorithm", "A* Search" if "A*" in algorithm else "BFS")
+            m2.metric("Total Nodes", len(path))
+            m3.metric("Route Cost", f"{cost} km" if isinstance(cost, (int, float)) else cost)
+            m4.metric("Status", "🛵 Dispatched")
             
             fig = draw_graph(G, path, highlight_start=True)
             st.pyplot(fig)
