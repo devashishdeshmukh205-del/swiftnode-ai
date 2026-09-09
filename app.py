@@ -15,7 +15,7 @@ st.markdown("""
     .stAppDeployButton {display: none !important;}
     
     .stApp {
-        background-color: #fafbfa;
+        background-color: grey;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     
